@@ -1,11 +1,33 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
+using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace DataStructures.Collections.Tests
 {
     [TestClass]
     public class StackTests
     {
+        public TestContext TestContext { get; set; }
+        [TestMethod]
+        public void Constructor_initializes_stack_with_array_in_parameter()
+        {
+            int[] initialArray = new int[] { 1, 2, 3 };
+            Stack<int> stack = new Stack<int>(initialArray);
+            Assert.IsTrue(stack.Length == initialArray.Length);
+            for (int i = initialArray.Length - 1; i >= 0; i--)
+            {
+                var value = stack.Pop();
+                Assert.IsTrue(value == initialArray[i]);
+            }
+        }
+        [TestMethod]
+        public void Constructor_initialSize_parameter_doesn_t_affect_stack_length()
+        {
+            Stack<int> stack = new Stack<int>(14);
+            Assert.IsTrue(stack.Length == 0);
+        }
         [TestMethod]
         public void Push_expects_the_stack_to_grow()
         {
@@ -58,6 +80,49 @@ namespace DataStructures.Collections.Tests
             stack.Push(2);
             stack.Clear();
             Assert.IsTrue(stack.Length == 0);
+        }
+        [TestMethod]
+        public void Compare_massive_add_items_with_system_implementation()
+        {   
+            int size = Int16.MaxValue;
+            var items = Enumerable.Range(0, size);
+
+            var myStackAddItemsLength = AddItemsIntoMyStack(items);
+
+            // we ensure that the previous operations won't affect the performance of the following operations
+            GC.Collect();
+            Task.Delay(5 * 1000).Wait();
+            
+            var sysStackAddItemsLength = AddItemsIntoSystemStack(items);
+
+            TestContext.WriteLine($"MyStack.AddItemsLenght: {myStackAddItemsLength}ms\nSysStack.AddItemsLenght: {sysStackAddItemsLength}ms");
+        }
+
+        private long AddItemsIntoSystemStack(System.Collections.Generic.IEnumerable<int> items)
+        {
+            Stopwatch stopwatch = new Stopwatch();
+            System.Collections.Generic.Stack<int> sysStack = new System.Collections.Generic.Stack<int>();
+            stopwatch.Start();
+            foreach (var item in items)
+            {
+                sysStack.Push(item);
+            }
+            stopwatch.Stop();
+            var sysStackAddItemsLength = stopwatch.ElapsedMilliseconds;
+            return stopwatch.ElapsedMilliseconds;
+        }
+
+        private long AddItemsIntoMyStack(System.Collections.Generic.IEnumerable<int> items)
+        {
+            Stopwatch stopwatch = new Stopwatch();
+            Stack<int> myStack = new Stack<int>();
+            stopwatch.Start();
+            foreach (var item in items)
+            {
+                myStack.Push(item);
+            }
+            stopwatch.Stop();
+            return stopwatch.ElapsedMilliseconds;
         }
     }
 }
