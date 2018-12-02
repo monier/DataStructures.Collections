@@ -6,6 +6,7 @@ namespace DataStructures.Collections
 {
     public class Stack<T>
     {
+        private const int DefaultSize = 10;
         private T[] _innerItems = null;
         private int _realSize = 0;
         public int Length
@@ -30,7 +31,7 @@ namespace DataStructures.Collections
             }
             else
             {
-                _innerItems = new T[0];
+                _innerItems = new T[DefaultSize];
                 _realSize = 0;
             }
         }
@@ -39,11 +40,7 @@ namespace DataStructures.Collections
             _realSize++;
             if (_innerItems.Length < _realSize)
             {
-                //T[] _newItems = new T[_realSize];
-                //_innerItems.CopyTo(_newItems, 0);
-                //_innerItems = _newItems;
-
-                Array.Resize(ref _innerItems, _realSize);
+                Array.Resize(ref _innerItems, _realSize + DefaultSize);
             }
             _innerItems[_realSize - 1] = item;
         }
@@ -62,7 +59,7 @@ namespace DataStructures.Collections
         {
             if (_realSize > 0)
             {
-                _innerItems = new T[0];
+                _innerItems = new T[DefaultSize];
             }
             _realSize = 0;
         }
