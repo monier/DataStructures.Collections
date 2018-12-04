@@ -40,7 +40,7 @@ namespace DataStructures.Collections
             _realSize++;
             if (_innerItems.Length < _realSize)
             {
-                Array.Resize(ref _innerItems, _realSize + DefaultSize);
+                Array.Resize(ref _innerItems, _realSize * 2);
             }
             _innerItems[_realSize - 1] = item;
         }
@@ -50,6 +50,7 @@ namespace DataStructures.Collections
             {
                 _realSize--;
                 var value = _innerItems[_realSize];
+                _innerItems[_realSize] = default(T);
                 Array.Resize(ref _innerItems, _realSize);
                 return value;
             }
@@ -59,6 +60,7 @@ namespace DataStructures.Collections
         {
             if (_realSize > 0)
             {
+                Array.Clear(_innerItems, 0, _innerItems.Length);
                 _innerItems = new T[DefaultSize];
             }
             _realSize = 0;

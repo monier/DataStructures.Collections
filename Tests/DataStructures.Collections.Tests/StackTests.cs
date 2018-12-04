@@ -82,17 +82,13 @@ namespace DataStructures.Collections.Tests
             Assert.IsTrue(stack.Length == 0);
         }
         [TestMethod]
-        public void Compare_massive_add_items_with_system_implementation()
-        {   
-            int size = Int16.MaxValue;
+        [DataRow(10000)]
+        [DataRow(100000)]
+        public void Compare_massive_add_items_with_system_implementation(int size)
+        {
             var items = Enumerable.Range(0, size);
 
             var myStackAddItemsLength = AddItemsIntoMyStack(items);
-
-            // we ensure that the previous operations won't affect the performance of the following operations
-            GC.Collect();
-            Task.Delay(5 * 1000).Wait();
-            
             var sysStackAddItemsLength = AddItemsIntoSystemStack(items);
 
             TestContext.WriteLine($"MyStack.AddItemsLenght: {myStackAddItemsLength}ms\nSysStack.AddItemsLenght: {sysStackAddItemsLength}ms");
